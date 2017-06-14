@@ -1,0 +1,109 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div ><input name="files" id="files"/></div>
+    
+<div class="col-sm-12 col-md-12 col-lg-12">
+        <div class="col-sm-3 col-md-3 col-lg-3"></div>
+        <div>You can copy an image and paste it in the box below. <a style="color:blue!important" target="_blank" href="">Further instructions</a></div>    
+</div>
+
+<div class="col-sm-12 col-md-12 col-lg-12">
+        <label for="fileUploads" class="col-sm-3 col-md-3 col-lg-3">File(s) Upload</label>
+        <div name="fileUploads" id="fileUploads" multiple contenteditable="true" style="outline: 1px solid black; overflow: auto;"></div>
+</div>
+</body>
+<html>
+
+<script>
+    document.getElementById("fileUploads").focus();
+    document.body.addEventListener("paste", function (e) {
+	debugger;
+        if (e.clipboardData != undefined) {
+            debugger;
+            for (var i = 0; i < e.clipboardData.items.length; i++) {
+                if (e.clipboardData.items[i].kind == "file" && e.clipboardData.items[i].type == "image/png") {
+                    // get the blob
+                    var imageFile = e.clipboardData.items[i].getAsFile();
+
+                    // read the blob as a data URL
+                    var fileReader = new FileReader();
+                    fileReader.onloadend = function (e) {
+                        // create an image
+                        var image = document.createElement("IMG");
+                        image.src = this.result;
+
+                        var files = $('#files');
+                        files.val(files.val() + image.src + "-");
+
+                        // insert the image
+                        var range = window.getSelection().getRangeAt(0);
+                        range.insertNode(image);
+                        range.collapse(false);
+
+                        // set the selection to after the image
+                        var selection = window.getSelection();
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    };
+
+                    // TODO: Error Handling!
+                    // fileReader.onerror = ...
+
+                    fileReader.readAsDataURL(imageFile);
+
+                    // prevent the default paste action
+                    e.preventDefault();
+
+                    // only paste 1 image at a time
+                    break;
+                }
+            }
+        }
+        else
+        {
+            for (var i = 0; i < window.clipboardData.files.length; i++) {
+                if (window.clipboardData.files[i].type == "image/png") {
+                    // get the blob
+                    var imageFile = window.clipboardData.files[i];
+
+                    // read the blob as a data URL
+                    var fileReader = new FileReader();
+                    fileReader.onloadend = function (e) {
+                        // create an image
+                        var image = document.createElement("IMG");
+                        image.src = this.result;
+
+                        var files = $('#files');
+                        files.val(files.val() + image.src + "-");
+
+                        // insert the image
+                        var range = window.getSelection().getRangeAt(0);
+                        range.insertNode(image);
+                        range.collapse(false);
+
+                        // set the selection to after the image
+                        var selection = window.getSelection();
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+                    };
+
+                    // TODO: Error Handling!
+                    // fileReader.onerror = ...
+
+                    fileReader.readAsDataURL(imageFile);
+
+                    // prevent the default paste action
+                    e.preventDefault();
+
+                    // only paste 1 image at a time
+                    break;
+                }
+            }
+        }
+    });
+</script>
